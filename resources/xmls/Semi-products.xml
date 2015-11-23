@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Semi-products>
+    <Semi-product>
+        <id>1</id>
+        <name>土豆丝</name>
+        <Ingredient>土豆</Ingredient>
+        <scale>0.95</scale>
+    </Semi-product>
+    <Semi-product>
+        <id>2</id>
+        <name>青椒丝</name>
+        <Ingredient>青椒</Ingredient>
+        <scale>1</scale>
+    </Semi-product>
+    <Semi-product>
+        <id>3</id>
+        <name>蛋液</name>
+        <Ingredient>鸡蛋</Ingredient>
+        <scale>0.85</scale>
+    </Semi-product>
+    <Semi-product>
+        <id>4</id>
+        <name>西红柿块</name>
+        <Ingredient>西红柿</Ingredient>
+        <scale>0.95</scale>
+    </Semi-product>
+</Semi-products>

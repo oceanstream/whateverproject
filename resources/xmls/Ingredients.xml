@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Ingredients>
+	<ingredient>
+		<id>1</id>
+		<name>土豆</name>
+	</ingredient>
+	<ingredient>
+		<id>2</id>
+		<name>青椒</name>
+	</ingredient>
+	<ingredient>
+		<id>3</id>
+		<name>鸡蛋</name>
+	</ingredient>
+	<ingredient>
+		<id>4</id>
+		<name>西红柿</name>
+	</ingredient>
+</Ingredients>
