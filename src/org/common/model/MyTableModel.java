@@ -2,10 +2,8 @@ package org.common.model;
 
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -64,6 +62,7 @@ public class MyTableModel extends AbstractTableModel{
 	
 	
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
@@ -104,9 +103,7 @@ public class MyTableModel extends AbstractTableModel{
         JDialog jd=new JDialog(jf,"警告",true);  
         WarningDialog(){ 
             jd.setSize(300,200); 
-            int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-            int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-            jd.setLocation((width-300)/2,(height-200)/2);
+            jd.setLocation(CommonUtil.getCenterPointOnScreen(jd));
             Container c2=jd.getContentPane();  
             c2.setLayout(null);  
             JLabel jl=new JLabel("请输入正确的数量！");

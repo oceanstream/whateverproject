@@ -1,20 +1,24 @@
 package org.common.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,15 +44,19 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.common.dataobject.Dish;
+import org.common.dataobject.Order;
 import org.common.dataobject.Seasoning;
 import org.common.dataobject.SemiProduct;
 import org.common.model.MyButtonEditor;
+import org.common.model.MyStatisticTableModel;
 import org.common.model.MyTableModel;
 import org.common.util.CommonUtil;
+import org.common.util.MyExcelWriter;
 import org.common.util.XmlUtil;
 
 
@@ -77,9 +85,9 @@ public class MainUI extends JFrame{
 	private String selection="";
 
 
-	
-	
-	
+
+
+
 	public static boolean getChange_data() {
 		return change_data;
 	}
@@ -141,7 +149,6 @@ public class MainUI extends JFrame{
 	private void InitComponent(){
 
 		Container contentPane = this.getContentPane();
-		//		contentPane.setLayout(new BorderLayout(0, 0));
 
 		GridBagLayout layout = new GridBagLayout();
 		contentPane.setLayout(layout);
@@ -193,7 +200,6 @@ public class MainUI extends JFrame{
 						String temp = jl.getSelectedValue();
 
 						//第一条数据必定要添加
-						System.out.println(data.size());
 						if(data.size()==0){
 							change_data = true;
 						}
@@ -233,10 +239,9 @@ public class MainUI extends JFrame{
 								//原材料
 								String ingre="";
 								for(SemiProduct s1 : list){
-									double scale = Double.parseDouble(s1.getScale());
-									double result = Double.parseDouble(s1.getCount())/scale;
-
-									ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatDouble(result)+"g）\n";
+									float scale = s1.getScale();
+									float result = s1.getCount()/scale;
+									ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatFloat(result)+"g）\n";
 
 								}
 								ingre = ingre.substring(0,ingre.length()-1);
@@ -338,10 +343,48 @@ public class MainUI extends JFrame{
 		JScrollPane scrollpane1 = new JScrollPane(jtb);
 
 		JPanel jpanel = new JPanel();
-		jpanel.setLayout(new BorderLayout());
-		JButton jb = new JButton("统计");
-		jpanel.add(jb,BorderLayout.CENTER);
+		jpanel.setLayout(new FlowLayout());
+		JButton jb = new JButton("导出");
+		JButton jb2 = new JButton("统计");
+		jpanel.add(jb);
+		jpanel.add(jb2);
 
+		jb.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Order order = new Order(MainUI.this, jtb, ALL_DISHES);
+				if(order.getDialog()==null){
+					FileDialog export = new FileDialog(MainUI.this, "导出", FileDialog.SAVE);
+					export.setLocation(CommonUtil.getCenterPointOnScreen(export));
+					export.setVisible(true);
+					 try {
+						FileOutputStream out = new FileOutputStream(export.getDirectory() + export.getFile() + ".xls");
+						MyExcelWriter.writeExcel(out, new MyStatisticTableModel(order));
+					 
+					 } catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+		jb2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+				Order order = new Order(MainUI.this,jtb, ALL_DISHES);
+
+				if(order.getDialog()==null){
+					//dialog不为空，表中有数据
+					new MyStatisticTableJF(order).setVisible(true);
+				}
+			}
+		});
 
 		contentPane.add(scrollpane);
 		contentPane.add(scrollpane1);
@@ -390,24 +433,32 @@ public class MainUI extends JFrame{
 		// TODO Auto-generated method stub
 		mmb = new JMenuBar();
 
-		Font font = new Font("微软雅黑", Font.PLAIN, 12);
+		Font font = new Font("微软雅黑", Font.PLAIN, 14);
+		Font font1 = new Font("微软雅黑",Font.PLAIN,16);
 
 		jm1 = new JMenu("文件");
 		jm1.setFont(font);
 
+
+
 		JMenuItem m1 = new JMenuItem("打开");
-		m1.setFont(font);
+		m1.setFont(font1);
 		m1.setHorizontalAlignment(SwingConstants.CENTER);
+
 		JMenuItem m2 = new JMenuItem("保存");
-		m2.setFont(font);
+		m2.setFont(font1);
 		m2.setHorizontalAlignment(SwingConstants.CENTER);
+
 		JMenuItem m3 = new JMenuItem("另存为");
-		m3.setFont(font);
+		m3.setFont(font1);
 		m3.setHorizontalAlignment(SwingConstants.CENTER);
 
 		jm1.add(m1);
+		jm1.addSeparator();
 		jm1.add(m2);
+		jm1.addSeparator();
 		jm1.add(m3);
+		jm1.setBounds(0, 0, 100, 100);
 
 		jm2 = new JMenu("选项");
 		jm2.setFont(font);
@@ -484,8 +535,8 @@ public class MainUI extends JFrame{
 
 		private void initPanel() {
 			// TODO Auto-generated method stub
-			  this.panel = new JPanel();
-			  this.panel.setLayout(null);
+			this.panel = new JPanel();
+			this.panel.setLayout(null);
 		}
 
 
@@ -523,6 +574,127 @@ public class MainUI extends JFrame{
 				return this.panel;
 			}
 			return this;
+		}
+	}
+
+	class MyStatisticTableJF extends JFrame{
+
+		Order order;
+
+		public MyStatisticTableJF(Order order){
+			this.order = order;
+			this.setSize(new Dimension(800,600));
+			this.setLocation(CommonUtil.getCenterPointOnScreen(this));
+
+
+
+			final MyStatisticTableModel model = new MyStatisticTableModel(order);
+
+			final JTable table  = new JTable(model){
+				//设置JTable填充满Jscrollpane
+				@Override
+				public boolean getScrollableTracksViewportWidth() {
+					// TODO Auto-generated method stub
+					if (autoResizeMode == AUTO_RESIZE_OFF) //
+						if (this.getParent() instanceof JViewport) //
+							return (((JViewport) getParent()).getWidth() > getPreferredSize().width);
+					return true;
+				}
+			} ;
+
+			table.setFont(new Font("微软雅黑",Font.PLAIN, 16));
+			//设置不可改变表格大小
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			//设置表格行不可选中
+			table.setRowSelectionAllowed(false);
+			//表头不可拖动
+			table.getTableHeader().setReorderingAllowed(false);
+			//列大小不可改变
+			table.getTableHeader().setResizingAllowed(false);
+			//设置列高30
+			table.setRowHeight(30);
+
+			table.getColumnModel().getColumn(0).setHeaderValue("所有的菜(份)");
+			table.getColumnModel().getColumn(0).setPreferredWidth(100);
+
+			table.getColumnModel().getColumn(1).setHeaderValue("半成品统计(g)");
+			table.getColumnModel().getColumn(1).setPreferredWidth(200);
+
+			table.getColumnModel().getColumn(2).setHeaderValue("原材料统计(g)");
+			table.getColumnModel().getColumn(2).setPreferredWidth(200);
+
+			table.getColumnModel().getColumn(3).setHeaderValue("调味料统计(g)");
+			table.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+			table.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 15));
+
+			DefaultTableCellRenderer render = new DefaultTableCellRenderer();
+			render.setHorizontalAlignment(SwingConstants.CENTER);
+			
+			table.setDefaultRenderer(Object.class, render);
+
+
+			JScrollPane jsp = new JScrollPane(table);
+
+			JPanel jpanel = new JPanel();
+			JButton jbt = new JButton("导出Excel");
+			
+			jbt.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// TODO Auto-generated method stub
+					FileDialog export = new FileDialog(MainUI.this, "导出", FileDialog.SAVE);
+					export.setLocation(CommonUtil.getCenterPointOnScreen(export));
+					export.setVisible(true);
+					 try {
+						FileOutputStream out = new FileOutputStream(export.getDirectory() + export.getFile() + ".xls");
+						MyExcelWriter.writeExcel(out, model);
+					 
+					 } catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			
+			jpanel.add(jbt);
+
+			this.getContentPane().add(jsp);
+			this.getContentPane().add(jpanel);
+
+
+
+			GridBagLayout layout = new GridBagLayout();
+			this.getContentPane().setLayout(layout);
+
+
+			GridBagConstraints s= new GridBagConstraints();
+
+			s.fill = GridBagConstraints.BOTH;
+
+			s.gridx= 0;
+			s.gridy =0;
+			s.gridwidth = 1;
+			s.gridheight = 1;
+			s.weightx = 1;
+			s.weighty = 96;
+			s.ipadx = 600;
+			s.ipady = 550;
+
+			layout.setConstraints(jsp, s);
+
+
+			s.gridx= 0;
+			s.gridy =1;
+			s.gridwidth = 1;
+			s.gridheight = 1;
+			s.weightx = 1;
+			s.weighty = 4;
+			s.ipadx = 600;
+			s.ipady = 50;
+
+			layout.setConstraints(jpanel, s);
 		}
 	}
 

@@ -6,13 +6,10 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Vector;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -22,6 +19,7 @@ import javax.swing.WindowConstants;
 import org.common.ui.MainUI;
 
 
+@SuppressWarnings("serial")
 public class MyButtonEditor extends DefaultCellEditor{
 
 	private JPanel panel;  
@@ -56,13 +54,12 @@ public class MyButtonEditor extends DefaultCellEditor{
 		this.button.setFont(new Font("微软雅黑",Font.PLAIN,16));
 		this.button.addActionListener(new ActionListener() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				MyButtonEditor.this.fireEditingCanceled(); 
-				
 				new WarningDialog(jtb).jd.show();
-
 			}
 		});
 
@@ -123,7 +120,8 @@ public class MyButtonEditor extends DefaultCellEditor{
             c2.add(jbb1);
             
             jbb.addActionListener(new ActionListener(){  
-                @Override  
+                @SuppressWarnings("static-access")
+				@Override  
                 public void actionPerformed(ActionEvent e) {  
                     
                 	MyTableModel myModel = (MyTableModel) table.getModel();

@@ -39,16 +39,17 @@ public class XmlUtil {
 			for(Element e3 : list1){
 				String semi_name = e3.elementText("name");
 				String semi_count = e3.elementText("count");
+				System.out.println(Float.parseFloat(semi_count));
 				String semi_ingredient = e3.elementText("ingredient");
 				String semi_scale = e3.elementText("scale");
-				SemiProduct semiProduct = new SemiProduct(semi_name, semi_count, semi_ingredient, semi_scale);
+				SemiProduct semiProduct = new SemiProduct(semi_name, Float.parseFloat(semi_count), semi_ingredient, Float.parseFloat(semi_scale));
 				list_semi.add(semiProduct);
 			}
 			
 			for(Element e4 : list2){
 				String seasoning_name = e4.elementText("name");
 				String seasoning_count = e4.elementText("count");
-				Seasoning seasoning = new Seasoning(seasoning_name, seasoning_count);
+				Seasoning seasoning = new Seasoning(seasoning_name, Float.parseFloat(seasoning_count));
 				list_seasonings.add(seasoning);
 			}
 			

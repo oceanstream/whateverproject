@@ -5,25 +5,25 @@
 		<semi-products>
 			<semi-product>
 				<name>土豆丝</name>
-				<count>1875</count>
+				<count>1875.00</count>
 				<ingredient>土豆</ingredient>
 				<scale>0.95</scale>
 			</semi-product>
 			<semi-product>
 				<name>青椒丝</name>
-				<count>125</count>
+				<count>125.00</count>
 				<ingredient>青椒</ingredient>
-				<scale>1</scale>
+				<scale>1.00</scale>
 			</semi-product>
 		</semi-products>
 		<seasonings>
 			<seasoning>
 				<name>食盐</name>
-				<count>18</count>
+				<count>18.0</count>
 			</seasoning>
 			<seasoning>
 				<name>味精</name>
-				<count>9</count>
+				<count>9.0</count>
 			</seasoning>
 		</seasonings>
 	</Dish>
@@ -46,15 +46,15 @@
 		<seasonings>
 			<seasoning>
 				<name>食盐</name>
-				<count>15</count>
+				<count>15.0</count>
 			</seasoning>
 			<seasoning>
 				<name>味精</name>
-				<count>10</count>
+				<count>10.0</count>
 			</seasoning>
 			<seasoning>
 				<name>食用油</name>
-				<count>20</count>
+				<count>20.0</count>
 			</seasoning>
 		</seasonings>
 	</Dish>
@@ -83,15 +83,15 @@
 		<seasonings>
 			<seasoning>
 				<name>食盐</name>
-				<count>10</count>
+				<count>10.0</count>
 			</seasoning>
 			<seasoning>
 				<name>味精</name>
-				<count>5</count>
+				<count>5.0</count>
 			</seasoning>
 			<seasoning>
 				<name>老抽</name>
-				<count>10</count>
+				<count>10.0</count>
 			</seasoning>
 		</seasonings>
 	</Dish>

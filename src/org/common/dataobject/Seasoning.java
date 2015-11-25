@@ -10,7 +10,7 @@ public class Seasoning {
 	//调料名称
 	private String name;
 	 //调味料质量
-	private String count;
+	private float count;
 	
 	
 	
@@ -19,7 +19,7 @@ public class Seasoning {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Seasoning(String name, String count) {
+	public Seasoning(String name, float count) {
 		super();
 		this.name = name;
 		this.count = count;
@@ -33,11 +33,11 @@ public class Seasoning {
 		this.name = name;
 	}
 
-	public String getCount() {
+	public float getCount() {
 		return count;
 	}
 	
-	public void setCount(String count) {
+	public void setCount(float count) {
 		this.count = count;
 	}
 }

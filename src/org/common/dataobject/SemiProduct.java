@@ -10,18 +10,18 @@ public class SemiProduct {
 	//半成品唯一名字
 	private String name;
 	//半成品数量
-	private String count;
+	private float count;
 	//半成品原材料
 	private String ingredient;
 	//半成品与原材料比例
-	private String scale;
+	private float scale;
 	
 	public SemiProduct(){
 		super();
 	}
 
-	public SemiProduct(String name, String count, String ingredient,
-			String scale) {
+	public SemiProduct(String name, float count, String ingredient,
+			float scale) {
 		super();
 		this.name = name;
 		this.count = count;
@@ -37,11 +37,11 @@ public class SemiProduct {
 		this.name = name;
 	}
 
-	public String getCount() {
+	public float getCount() {
 		return count;
 	}
 
-	public void setCount(String count) {
+	public void setCount(float count) {
 		this.count = count;
 	}
 
@@ -53,11 +53,11 @@ public class SemiProduct {
 		this.ingredient = ingredient;
 	}
 
-	public String getScale() {
+	public float getScale() {
 		return scale;
 	}
 
-	public void setScale(String scale) {
+	public void setScale(float scale) {
 		this.scale = scale;
 	}
 	

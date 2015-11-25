@@ -13,6 +13,8 @@ public class Dish {
 	private List<SemiProduct> list_semis;	
 	//所需调味料
 	private List<Seasoning> list_seasonings;
+	//点菜数量
+	private int count;
 	
 	public Dish() {
 		super();
@@ -24,6 +26,17 @@ public class Dish {
 		this.name = name;
 		this.list_semis = list_semis;
 		this.list_seasonings = list_seasonings;
+	}
+
+	
+	
+	
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 	public String getName() {
