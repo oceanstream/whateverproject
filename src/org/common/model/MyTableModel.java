@@ -66,11 +66,13 @@ public class MyTableModel extends AbstractTableModel{
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		if(CommonUtil.isInteger(aValue.toString())){
-			tableData.get(rowIndex).set(columnIndex, (String) aValue);
-			fireTableCellUpdated(rowIndex, columnIndex);
-		}else{
-			new WarningDialog().jd.show();
+		if(columnIndex!=5){
+			if(CommonUtil.isInteger(aValue.toString())){
+				tableData.get(rowIndex).set(columnIndex, (String) aValue);
+				fireTableCellUpdated(rowIndex, columnIndex);
+			}else{
+				new WarningDialog().jd.show();
+			}
 		}
 	}
 

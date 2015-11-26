@@ -47,12 +47,12 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-
 import org.common.dataobject.Dish;
 import org.common.dataobject.Order;
 import org.common.dataobject.Seasoning;
 import org.common.dataobject.SemiProduct;
 import org.common.model.MyButtonEditor;
+import org.common.model.MyDialog;
 import org.common.model.MyStatisticTableModel;
 import org.common.model.MyTableModel;
 import org.common.util.CommonUtil;
@@ -66,7 +66,7 @@ public class MainUI extends JFrame{
 
 	private JMenuBar mmb;
 
-	private JMenu jm1,jm2,jm3;
+	private JMenu jm2,jm3;
 
 	//全局配置文件
 	private Properties props;
@@ -231,7 +231,8 @@ public class MainUI extends JFrame{
 								List<SemiProduct> list = dish.getList_semis();
 								String str = "";
 								for(SemiProduct s : list){
-									str = str+s.getName()+"（"+s.getCount()+"g）\n";
+									//	str = str+s.getName()+"（"+s.getCount()+"g）\n";
+									str = str+s.getName()+"，";
 								}
 								str = str.substring(0,str.length()-1);
 								addData.add(str);
@@ -239,10 +240,10 @@ public class MainUI extends JFrame{
 								//原材料
 								String ingre="";
 								for(SemiProduct s1 : list){
-									float scale = s1.getScale();
-									float result = s1.getCount()/scale;
-									ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatFloat(result)+"g）\n";
-
+									//									float scale = s1.getScale();
+									//									float result = s1.getCount()/scale;
+									//									ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatFloat(result)+"g）\n";
+									ingre = ingre+s1.getIngredient()+"，";
 								}
 								ingre = ingre.substring(0,ingre.length()-1);
 
@@ -252,12 +253,16 @@ public class MainUI extends JFrame{
 								List<Seasoning> list1 = dish.getList_seasonings();
 								String sea = "";
 								for(Seasoning s : list1){
-									sea = sea+s.getName()+"（"+s.getCount()+"g）\n";
+									//	sea = sea+s.getName()+"（"+s.getCount()+"g）\n";
+									sea = sea + s.getName()+"，";
 								}
-								sea = sea.substring(0,sea.length()-1);
+								if(sea!=""){
+									sea = sea.substring(0,sea.length()-1);
+								}
+
 								addData.add(sea);
 
-								addData.add("删除");
+								addData.add("详情;删除");
 								data.add(addData);
 								myModel.fireTableDataChanged();
 							}
@@ -303,24 +308,25 @@ public class MainUI extends JFrame{
 		jtb.setRowHeight(100);
 
 		jtb.getColumnModel().getColumn(0).setHeaderValue("菜名");
-		jtb.getColumnModel().getColumn(0).setPreferredWidth(95);
+		jtb.getColumnModel().getColumn(0).setPreferredWidth(130);
 
 		jtb.getColumnModel().getColumn(1).setHeaderValue("数量");
-		jtb.getColumnModel().getColumn(1).setPreferredWidth(50);
+		jtb.getColumnModel().getColumn(1).setPreferredWidth(75);
 
-		jtb.getColumnModel().getColumn(2).setHeaderValue("半成品(每份)");
-		jtb.getColumnModel().getColumn(2).setPreferredWidth(160);
+		jtb.getColumnModel().getColumn(2).setHeaderValue("所需半成品");
+		jtb.getColumnModel().getColumn(2).setPreferredWidth(238);
 
-		jtb.getColumnModel().getColumn(3).setHeaderValue("原材料(每份)");
-		jtb.getColumnModel().getColumn(3).setPreferredWidth(160);
+		jtb.getColumnModel().getColumn(3).setHeaderValue("所需原材料");
+		jtb.getColumnModel().getColumn(3).setPreferredWidth(238);
 
-		jtb.getColumnModel().getColumn(4).setHeaderValue("调味品(每份)");
-		jtb.getColumnModel().getColumn(4).setPreferredWidth(160);
+		jtb.getColumnModel().getColumn(4).setHeaderValue("所需调味品");
+		jtb.getColumnModel().getColumn(4).setPreferredWidth(238);
 
 		jtb.getColumnModel().getColumn(5).setHeaderValue("操作");
-		jtb.getColumnModel().getColumn(5).setPreferredWidth(80);
+		jtb.getColumnModel().getColumn(5).setPreferredWidth(135);
 
 		jtb.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 15));
+
 
 		//		DefaultTableCellRenderer render = new DefaultTableCellRenderer();
 
@@ -336,7 +342,7 @@ public class MainUI extends JFrame{
 		jtb.getColumnModel().getColumn(5).setCellRenderer(render);
 
 
-		jtb.getColumnModel().getColumn(5).setCellEditor(new MyButtonEditor(this,jtb));
+		jtb.getColumnModel().getColumn(5).setCellEditor(new MyButtonEditor(this,jtb,ALL_DISHES));
 
 
 
@@ -351,19 +357,29 @@ public class MainUI extends JFrame{
 
 		jb.addActionListener(new ActionListener() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				Order order = new Order(MainUI.this, jtb, ALL_DISHES);
+				Order order = new Order(MainUI.this, (MyTableModel)jtb.getModel(), ALL_DISHES);
 				if(order.getDialog()==null){
 					FileDialog export = new FileDialog(MainUI.this, "导出", FileDialog.SAVE);
 					export.setLocation(CommonUtil.getCenterPointOnScreen(export));
 					export.setVisible(true);
-					 try {
+					if (export.getDirectory() == null || export.getFile() == null){
+						return;
+					}
+					try {
 						FileOutputStream out = new FileOutputStream(export.getDirectory() + export.getFile() + ".xls");
-						MyExcelWriter.writeExcel(out, new MyStatisticTableModel(order));
-					 
-					 } catch (FileNotFoundException e) {
+						boolean result = MyExcelWriter.writeExcel(out, (MyTableModel)jtb.getModel(),new MyStatisticTableModel(order));
+						if(result){
+							//导出成功
+							new MyDialog("通知", "导出成功！", MainUI.this).jd.show();
+						}else{
+							//导出失败
+							new MyDialog("通知", "导出失败！", MainUI.this).jd.show();
+						}
+					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -377,7 +393,7 @@ public class MainUI extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 
-				Order order = new Order(MainUI.this,jtb, ALL_DISHES);
+				Order order = new Order(MainUI.this,(MyTableModel)jtb.getModel(), ALL_DISHES);
 
 				if(order.getDialog()==null){
 					//dialog不为空，表中有数据
@@ -399,10 +415,10 @@ public class MainUI extends JFrame{
 		s.gridy =0;
 		s.gridwidth = 1;
 		s.gridheight = 2;
-		s.weightx = 2;
+		s.weightx = 1;
 		s.weighty = 0;
-		s.ipadx = 140;
-		s.ipady = 600;
+		s.ipadx = 120;
+		s.ipady = 700;
 
 		layout.setConstraints(scrollpane, s);
 
@@ -410,10 +426,10 @@ public class MainUI extends JFrame{
 		s.gridy = 0;
 		s.gridwidth = 1;
 		s.gridheight = 1;
-		s.weightx = 8;
-		s.weighty = 9;
-		s.ipadx = 650;
-		s.ipady = 580;
+		s.weightx = 9;
+		s.weighty = 95;
+		s.ipadx = 1080;
+		s.ipady = 670;
 
 		layout.setConstraints(scrollpane1, s);
 
@@ -422,9 +438,9 @@ public class MainUI extends JFrame{
 		s.gridwidth = 1;
 		s.gridheight = 1;
 		s.weightx = 0;
-		s.weighty = 1;
-		s.ipadx = 645;
-		s.ipady = 20;
+		s.weighty = 5;
+		s.ipadx = 1080;
+		s.ipady = 30;
 
 		layout.setConstraints(jpanel, s);
 	}
@@ -434,47 +450,24 @@ public class MainUI extends JFrame{
 		mmb = new JMenuBar();
 
 		Font font = new Font("微软雅黑", Font.PLAIN, 14);
-		Font font1 = new Font("微软雅黑",Font.PLAIN,16);
 
-		jm1 = new JMenu("文件");
-		jm1.setFont(font);
-
-
-
-		JMenuItem m1 = new JMenuItem("打开");
-		m1.setFont(font1);
-		m1.setHorizontalAlignment(SwingConstants.CENTER);
-
-		JMenuItem m2 = new JMenuItem("保存");
-		m2.setFont(font1);
-		m2.setHorizontalAlignment(SwingConstants.CENTER);
-
-		JMenuItem m3 = new JMenuItem("另存为");
-		m3.setFont(font1);
-		m3.setHorizontalAlignment(SwingConstants.CENTER);
-
-		jm1.add(m1);
-		jm1.addSeparator();
-		jm1.add(m2);
-		jm1.addSeparator();
-		jm1.add(m3);
-		jm1.setBounds(0, 0, 100, 100);
-
-		jm2 = new JMenu("选项");
+		jm2 = new JMenu("设置");
 		jm2.setFont(font);
 
-		JMenuItem m4 = new JMenuItem("修改菜单");
+		JMenuItem m4 = new JMenuItem("添加菜谱");
 		m4.setFont(font);
 		m4.setHorizontalAlignment(SwingConstants.CENTER);
 		JMenuItem m5 = new JMenuItem("修改菜谱");
 		m5.setFont(font);
 		m5.setHorizontalAlignment(SwingConstants.CENTER);
-		JMenuItem m6 = new JMenuItem("修改调料表");
+		JMenuItem m6 = new JMenuItem("删除菜谱");
 		m6.setFont(font);
 		m6.setHorizontalAlignment(SwingConstants.CENTER);
 
 		jm2.add(m4);
+		jm2.addSeparator();
 		jm2.add(m5);
+		jm2.addSeparator();
 		jm2.add(m6);
 
 		jm3 = new JMenu("帮助");
@@ -488,9 +481,9 @@ public class MainUI extends JFrame{
 		m8.setHorizontalAlignment(SwingConstants.CENTER);
 
 		jm3.add(m7);
+		jm3.addSeparator();
 		jm3.add(m8);
 
-		mmb.add(jm1);
 		mmb.add(jm2);
 		mmb.add(jm3);
 
@@ -503,7 +496,7 @@ public class MainUI extends JFrame{
 		InitComponent();
 		this.setJMenuBar(mmb);
 		setTitle("原材料统计"+" v"+props.getProperty("version"));
-		setSize(1000, 600);
+		setSize(1200, 700);
 		//设置不可改变大小
 		//		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -520,7 +513,9 @@ public class MainUI extends JFrame{
 
 		private JPanel panel;
 
-		private JButton button;
+		private JButton btn_detail;
+
+		private JButton btn_delete;
 
 
 		public TableCellTextAreaRenderer() {
@@ -528,7 +523,8 @@ public class MainUI extends JFrame{
 			setWrapStyleWord(true);
 			this.initButton();
 			this.initPanel();
-			this.panel.add(this.button);
+			this.panel.add(this.btn_detail);
+			this.panel.add(this.btn_delete);
 		}
 
 
@@ -536,6 +532,7 @@ public class MainUI extends JFrame{
 		private void initPanel() {
 			// TODO Auto-generated method stub
 			this.panel = new JPanel();
+			this.panel.setBounds(5, 5, 130, 20);
 			this.panel.setLayout(null);
 		}
 
@@ -543,9 +540,13 @@ public class MainUI extends JFrame{
 
 		private void initButton() {
 			// TODO Auto-generated method stub
-			this.button = new JButton();
-			this.button.setBounds(6, 6, 80, 40);
-			this.button.setFont(new Font("微软雅黑",Font.PLAIN,16));
+			this.btn_detail = new JButton();  
+			this.btn_detail.setBounds(5, 5, 60, 20);
+			this.btn_detail.setFont(new Font("微软雅黑",Font.PLAIN,12));
+
+			this.btn_delete = new JButton();  
+			this.btn_delete.setBounds(70, 5, 60, 20);
+			this.btn_delete.setFont(new Font("微软雅黑",Font.PLAIN,12));
 
 		}
 
@@ -567,10 +568,11 @@ public class MainUI extends JFrame{
 			setText(value == null ? "" : value.toString());
 			setFont(new Font("微软雅黑", Font.PLAIN, 16));
 
-			setMargin(new Insets(6, 6, 6, 0));
+			setMargin(new Insets(5, 5, 5, 0));
 
 			if(column == 5){
-				this.button.setText(value == null ? "" : String.valueOf(value));
+				this.btn_detail.setText(value == null ? "" : String.valueOf(value).split(";")[0]);
+				this.btn_delete.setText(value == null ? "" : String.valueOf(value).split(";")[1]);
 				return this.panel;
 			}
 			return this;
@@ -630,7 +632,7 @@ public class MainUI extends JFrame{
 
 			DefaultTableCellRenderer render = new DefaultTableCellRenderer();
 			render.setHorizontalAlignment(SwingConstants.CENTER);
-			
+
 			table.setDefaultRenderer(Object.class, render);
 
 
@@ -638,26 +640,37 @@ public class MainUI extends JFrame{
 
 			JPanel jpanel = new JPanel();
 			JButton jbt = new JButton("导出Excel");
-			
+
 			jbt.addActionListener(new ActionListener() {
-				
+
+				@SuppressWarnings("deprecation")
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					// TODO Auto-generated method stub
 					FileDialog export = new FileDialog(MainUI.this, "导出", FileDialog.SAVE);
 					export.setLocation(CommonUtil.getCenterPointOnScreen(export));
 					export.setVisible(true);
-					 try {
+					if(export.getDirectory()==null||export.getFile()==null){
+						return;
+					}
+					try {
 						FileOutputStream out = new FileOutputStream(export.getDirectory() + export.getFile() + ".xls");
-						MyExcelWriter.writeExcel(out, model);
-					 
-					 } catch (FileNotFoundException e) {
+						boolean result = MyExcelWriter.writeExcel(out, (MyTableModel)jtb.getModel(),model);
+						if(result){
+							//导出成功
+							new MyDialog("通知", "导出成功！", MainUI.this).jd.show();
+						}else{
+							//导出失败
+							new MyDialog("通知", "导出失败！", MainUI.this).jd.show();
+						}
+
+					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			});
-			
+
 			jpanel.add(jbt);
 
 			this.getContentPane().add(jsp);

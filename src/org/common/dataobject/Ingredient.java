@@ -12,8 +12,6 @@ public class Ingredient {
 	
 	private float count;
 	
-	
-	
 	public float getCount() {
 		return count;
 	}

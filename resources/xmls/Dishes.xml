@@ -81,7 +81,7 @@
 			</semi-product>
 		</semi-products>
 		<seasonings>
-			<seasoning>
+		<seasoning>
 				<name>食盐</name>
 				<count>10.0</count>
 			</seasoning>
@@ -92,7 +92,7 @@
 			<seasoning>
 				<name>老抽</name>
 				<count>10.0</count>
-			</seasoning>
+			</seasoning> 
 		</seasonings>
 	</Dish>
 </Dishes>
