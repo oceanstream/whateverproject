@@ -65,7 +65,7 @@
 				<name>土豆块</name>
 				<count>2000</count>
 				<ingredient>土豆</ingredient>
-				<scale>1</scale>
+				<scale>1.00</scale>
 			</semi-product>
 			<semi-product>
 				<name>猪肉粒</name>
@@ -77,11 +77,11 @@
 				<name>小葱段</name>
 				<count>20</count>
 				<ingredient>小葱</ingredient>
-				<scale>1</scale>
+				<scale>1.00</scale>
 			</semi-product>
 		</semi-products>
 		<seasonings>
-		<seasoning>
+			<seasoning>
 				<name>食盐</name>
 				<count>10.0</count>
 			</seasoning>
@@ -92,7 +92,40 @@
 			<seasoning>
 				<name>老抽</name>
 				<count>10.0</count>
-			</seasoning> 
+			</seasoning>
+		</seasonings>
+	</Dish>
+	<Dish>
+		<name>老干妈肉丝蛋炒饭</name>
+		<semi-products>
+			<semi-product>
+				<name>老干妈酱(熟)</name>
+				<count>500</count>
+				<ingredient>老干妈酱</ingredient>
+				<scale>1.00</scale>
+			</semi-product>
+			<semi-product>
+				<name>蛋液</name>
+				<count>625</count>
+				<ingredient>鸡蛋</ingredient>
+				<scale>0.85</scale>
+			</semi-product>
+			<semi-product>
+			    <name>肉丝</name>
+			    <count>250</count>
+			    <ingredient>猪肉</ingredient>
+				<scale>1.00</scale>
+			</semi-product>
+		</semi-products>
+		<seasonings>
+		    <seasoning>
+		        <name>食盐</name>
+		        <count>3.0</count>
+		    </seasoning>
+		    <seasoning>
+		        <name>食用油</name>
+		        <count>10.0</count>
+		    </seasoning>
 		</seasonings>
 	</Dish>
 </Dishes>

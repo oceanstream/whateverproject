@@ -172,7 +172,7 @@ public class MyExcelWriter {
 
 	public static boolean writeExcel(FileOutputStream out, MyTableModel tm,MyStatisticTableModel sm){
 
-		String[] title1 = {"菜名","数量","所需半成品","所需原材料","所需调味品"};
+		String[] title1 = {"菜名","数量","每份所需半成品(g)","每份所需调味品(g)"};
 		String[] title2 = {"所有的菜(份)", "半成品统计(g)", "原材料统计(g)", "调味料统计(g)" };
 
 
@@ -180,69 +180,87 @@ public class MyExcelWriter {
 
 		try {
 			wwb=Workbook.createWorkbook(out); 
-			
+
 			WritableSheet sheet = wwb.createSheet("点菜清单", 0);
-			
+
 			WritableSheet sheet2 = wwb.createSheet("统计清单", 1);
-			
+
 			WritableFont wfont_title = new WritableFont(WritableFont.createFont("微软雅黑"),12,WritableFont.BOLD);   
 			WritableCellFormat font_title = new WritableCellFormat(wfont_title); 
-			
+
 			WritableFont wfont_content = new WritableFont(WritableFont.createFont("微软雅黑"), 12 ,WritableFont.NO_BOLD);   
 			WritableCellFormat font_content = new WritableCellFormat(wfont_content); 
-			
+
 			font_title.setAlignment(Alignment.CENTRE);
 			font_content.setAlignment(Alignment.CENTRE);
-			
+
 			//写点菜清单
 			for(int i=0;i<title1.length;i++){
-				if(i!=1){
+				//				if(i!=1){
+				//					sheet.setColumnView(i, 50);
+				//				}else{
+				//					sheet.setColumnView(i, 10);
+				//				}
+
+				switch(i){
+				case 0:
 					sheet.setColumnView(i, 30);
-				}else{
+					break;
+				case 1:
 					sheet.setColumnView(i, 10);
+					break;
+				case 2:
+					sheet.setColumnView(i, 50);
+					break;
+				case 3:
+					sheet.setColumnView(i, 50);
+					break;
+				default:
+					sheet.setColumnView(i, 30);
+					break;
 				}
 				Label label = new Label(i, 0, title1[i],font_title);
 				sheet.addCell(label);
 			}
-			
+
 			for(int i=0;i<tm.getTableData().size();i++){
-				
+
 				Label label = new Label(0,i+1,tm.getValueAt(i, 0).toString(),font_content);
 				sheet.addCell(label);
-				
+
 				Label label1 = new Label(1,i+1,tm.getValueAt(i, 1).toString(),font_content);
 				sheet.addCell(label1);
-				
+
 				Label label2 = new Label(2,i+1,tm.getValueAt(i, 2).toString(),font_content);
 				sheet.addCell(label2);
-				
+
 				Label label3 = new Label(3,i+1,tm.getValueAt(i, 3).toString(),font_content);
 				sheet.addCell(label3);
-				
-				Label label4 = new Label(4,i+1,tm.getValueAt(i, 4).toString(),font_content);
-				sheet.addCell(label4);
+
+				//				Label label4 = new Label(4,i+1,tm.getValueAt(i, 4).toString(),font_content);
+				//				sheet.addCell(label4);
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			//写统计清单
 			for(int i=0;i<title2.length;i++){
 				sheet2.setColumnView( i, 30);
 				Label label = new Label(i, 0, title2[i],font_title);
 				sheet2.addCell(label);
 			}
-			
+
 
 			for(int i=1;i<=sm.getRowCount();i++){
 				Label label = new Label(0,i,sm.getValueAt(i-1, 0).toString(),font_content);
@@ -262,9 +280,9 @@ public class MyExcelWriter {
 			wwb.close();   
 			out.flush();
 			out.close();
-			
+
 			return true;
-			
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

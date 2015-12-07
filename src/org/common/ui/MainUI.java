@@ -39,6 +39,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -53,6 +54,7 @@ import org.common.dataobject.Seasoning;
 import org.common.dataobject.SemiProduct;
 import org.common.model.MyButtonEditor;
 import org.common.model.MyDialog;
+import org.common.model.MyListCellRender;
 import org.common.model.MyStatisticTableModel;
 import org.common.model.MyTableModel;
 import org.common.util.CommonUtil;
@@ -83,9 +85,6 @@ public class MainUI extends JFrame{
 	private JTable jtb;
 
 	private String selection="";
-
-
-
 
 
 	public static boolean getChange_data() {
@@ -158,15 +157,18 @@ public class MainUI extends JFrame{
 
 
 		//初始化菜单栏
-		initMenuBar();
+		//		initMenuBar();
 
 
 		DefaultListModel<String> dlm = new DefaultListModel<String>();
 		for(String s : dish_names){
 			dlm.addElement(s);
 		}
+//		dlm.addElement("添加");
 		final JList<String> jl = new JList<String>(dlm);
 
+//		MyListCellRender render1 = new MyListCellRender();
+//		jl.setCellRenderer(render1);
 
 		jl.setFont(new Font("微软雅黑",Font.PLAIN, 14));
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer(){
@@ -181,31 +183,96 @@ public class MainUI extends JFrame{
 		jl.setCellRenderer(dlcr);
 
 
+
+
+
+
 		//设置List中Item的监听
+//		final JPopupMenu jp = new JPopupMenu();
+//
+//		JMenuItem jm1 = new JMenuItem("修改菜谱");
+//		jm1.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				System.out.println("修改菜谱=========="+jl.getSelectedValue());
+//			}
+//		});
+//		jm1.setFont(new Font("微软雅黑",Font.PLAIN,12));
+//		jm1.setHorizontalAlignment(SwingConstants.CENTER);
+//
+//		JMenuItem jm2 = new JMenuItem("删除菜谱");
+//		jm2.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				System.out.println("删除菜谱=========="+jl.getSelectedValue());
+//
+//				new MyDialog("警告", "是否删除"+"\n"+jl.getSelectedValue(), MainUI.this).jd.show();
+//
+//
+//
+//			}
+//		});
+//		jm2.setFont(new Font("微软雅黑",Font.PLAIN,12));
+//		jm2.setHorizontalAlignment(SwingConstants.CENTER);
+//
+//		jp.add(jm1);
+//		jp.add(jm2);
+
 		jl.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
 
-				if(jl.getSelectedIndex() != -1) {					
-					if(e.getClickCount()==1){
-						//单击事件
-						change_data = false;
+				int index = jl.locationToIndex(e.getPoint());
+				System.out.println("您正在点击======>"+index);
+				jl.setSelectedIndex(index);  
+
+				if(jl.getSelectedIndex()==-1){
+					return;
+				}
+
+				if(e.getButton()==3){
+					//右键
+					//右键点击“添加”按钮无效
+					if(jl.getSelectedIndex()==jl.getModel().getSize()-1){
+						return;
 					}
 
+		//			jp.show(e.getComponent(),e.getX(), e.getY());
+
+				}else if(e.getButton()==1){
+					//左键
+//					if(e.getClickCount()==1){
+						//单击事件		
+//						if(jl.getSelectedIndex()==jl.getModel().getSize()-1){
+//							//左键点击新增按钮
+//							System.out.println("正在左键点击新增按钮！！！");
+//
+//
+//
+//
+//
+//						}
+//						change_data = false;
+//					}
+
 					if(e.getClickCount() == 2){
+						
+//						if(jl.getSelectedIndex()==jl.getModel().getSize()-1){
+//							return;
+//						}
 						MyTableModel myModel = (MyTableModel) jtb.getModel();
 						Vector<List<String>> data = myModel.getTableData();
 						String temp = jl.getSelectedValue();
-
 						//第一条数据必定要添加
 						if(data.size()==0){
 							change_data = true;
 						}
-
 						selection = temp;
-
 
 						for(int i=0;i<data.size();i++){
 							if(data.get(i).get(0).equals(selection)){
@@ -226,53 +293,48 @@ public class MainUI extends JFrame{
 								Dish dish = ALL_DISHES.get(selection);
 								addData.add(dish.getName());
 								addData.add("1");
-
 								//半成品
 								List<SemiProduct> list = dish.getList_semis();
 								String str = "";
 								for(SemiProduct s : list){
-									//	str = str+s.getName()+"（"+s.getCount()+"g）\n";
-									str = str+s.getName()+"，";
+									str = str+s.getName()+"×"+s.getCount()+"，";
 								}
 								str = str.substring(0,str.length()-1);
 								addData.add(str);
 
 								//原材料
-								String ingre="";
-								for(SemiProduct s1 : list){
-									//									float scale = s1.getScale();
-									//									float result = s1.getCount()/scale;
-									//									ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatFloat(result)+"g）\n";
-									ingre = ingre+s1.getIngredient()+"，";
-								}
-								ingre = ingre.substring(0,ingre.length()-1);
-
-								addData.add(ingre);
+								//									String ingre="";
+								//									for(SemiProduct s1 : list){
+								//										float scale = s1.getScale();
+								//										float result = s1.getCount()/scale;
+								//										ingre = ingre+s1.getIngredient()+"（"+CommonUtil.formatFloat(result)+"g）\n";
+								//										ingre = ingre+s1.getIngredient()+"，";
+								//									}
+								//									ingre = ingre.substring(0,ingre.length()-1);
+								//
+								//									addData.add(ingre);
 
 								//调料
 								List<Seasoning> list1 = dish.getList_seasonings();
 								String sea = "";
 								for(Seasoning s : list1){
-									//	sea = sea+s.getName()+"（"+s.getCount()+"g）\n";
-									sea = sea + s.getName()+"，";
+									sea = sea+s.getName()+"×"+s.getCount()+"，";
 								}
 								if(sea!=""){
 									sea = sea.substring(0,sea.length()-1);
 								}
 
 								addData.add(sea);
-
 								addData.add("详情;删除");
 								data.add(addData);
 								myModel.fireTableDataChanged();
 							}
 						}
-
-
 					}
-				}
-
-
+				}else if(e.getButton()==2){
+					//中键
+					return;
+				}			
 			}
 		});
 
@@ -311,19 +373,16 @@ public class MainUI extends JFrame{
 		jtb.getColumnModel().getColumn(0).setPreferredWidth(130);
 
 		jtb.getColumnModel().getColumn(1).setHeaderValue("数量");
-		jtb.getColumnModel().getColumn(1).setPreferredWidth(75);
+		jtb.getColumnModel().getColumn(1).setPreferredWidth(55);
 
-		jtb.getColumnModel().getColumn(2).setHeaderValue("所需半成品");
-		jtb.getColumnModel().getColumn(2).setPreferredWidth(238);
+		jtb.getColumnModel().getColumn(2).setHeaderValue("每份所需半成品(g)");
+		jtb.getColumnModel().getColumn(2).setPreferredWidth(367);
 
-		jtb.getColumnModel().getColumn(3).setHeaderValue("所需原材料");
-		jtb.getColumnModel().getColumn(3).setPreferredWidth(238);
+		jtb.getColumnModel().getColumn(3).setHeaderValue("每份所需调味品(g)");
+		jtb.getColumnModel().getColumn(3).setPreferredWidth(367);
 
-		jtb.getColumnModel().getColumn(4).setHeaderValue("所需调味品");
-		jtb.getColumnModel().getColumn(4).setPreferredWidth(238);
-
-		jtb.getColumnModel().getColumn(5).setHeaderValue("操作");
-		jtb.getColumnModel().getColumn(5).setPreferredWidth(135);
+		jtb.getColumnModel().getColumn(4).setHeaderValue("操作");
+		jtb.getColumnModel().getColumn(4).setPreferredWidth(135);
 
 		jtb.getTableHeader().setFont(new Font("微软雅黑", Font.BOLD, 15));
 
@@ -339,10 +398,9 @@ public class MainUI extends JFrame{
 		jtb.getColumnModel().getColumn(2).setCellRenderer(render);
 		jtb.getColumnModel().getColumn(3).setCellRenderer(render);
 		jtb.getColumnModel().getColumn(4).setCellRenderer(render);
-		jtb.getColumnModel().getColumn(5).setCellRenderer(render);
 
 
-		jtb.getColumnModel().getColumn(5).setCellEditor(new MyButtonEditor(this,jtb,ALL_DISHES));
+		jtb.getColumnModel().getColumn(4).setCellEditor(new MyButtonEditor(this,jtb,ALL_DISHES));
 
 
 
@@ -445,49 +503,49 @@ public class MainUI extends JFrame{
 		layout.setConstraints(jpanel, s);
 	}
 
-	private void initMenuBar() {
-		// TODO Auto-generated method stub
-		mmb = new JMenuBar();
-
-		Font font = new Font("微软雅黑", Font.PLAIN, 14);
-
-		jm2 = new JMenu("设置");
-		jm2.setFont(font);
-
-		JMenuItem m4 = new JMenuItem("添加菜谱");
-		m4.setFont(font);
-		m4.setHorizontalAlignment(SwingConstants.CENTER);
-		JMenuItem m5 = new JMenuItem("修改菜谱");
-		m5.setFont(font);
-		m5.setHorizontalAlignment(SwingConstants.CENTER);
-		JMenuItem m6 = new JMenuItem("删除菜谱");
-		m6.setFont(font);
-		m6.setHorizontalAlignment(SwingConstants.CENTER);
-
-		jm2.add(m4);
-		jm2.addSeparator();
-		jm2.add(m5);
-		jm2.addSeparator();
-		jm2.add(m6);
-
-		jm3 = new JMenu("帮助");
-		jm3.setFont(font);
-
-		JMenuItem m7 = new JMenuItem("使用说明");
-		m7.setFont(font);
-		m7.setHorizontalAlignment(SwingConstants.CENTER);
-		JMenuItem m8 = new JMenuItem("关于...");	
-		m8.setFont(font);
-		m8.setHorizontalAlignment(SwingConstants.CENTER);
-
-		jm3.add(m7);
-		jm3.addSeparator();
-		jm3.add(m8);
-
-		mmb.add(jm2);
-		mmb.add(jm3);
-
-	}
+	//	private void initMenuBar() {
+	//		// TODO Auto-generated method stub
+	//		mmb = new JMenuBar();
+	//
+	//		Font font = new Font("微软雅黑", Font.PLAIN, 14);
+	//
+	//		jm2 = new JMenu("设置");
+	//		jm2.setFont(font);
+	//
+	//		JMenuItem m4 = new JMenuItem("添加菜谱");
+	//		m4.setFont(font);
+	//		m4.setHorizontalAlignment(SwingConstants.CENTER);
+	//		JMenuItem m5 = new JMenuItem("修改菜谱");
+	//		m5.setFont(font);
+	//		m5.setHorizontalAlignment(SwingConstants.CENTER);
+	//		JMenuItem m6 = new JMenuItem("删除菜谱");
+	//		m6.setFont(font);
+	//		m6.setHorizontalAlignment(SwingConstants.CENTER);
+	//
+	//		jm2.add(m4);
+	//		jm2.addSeparator();
+	//		jm2.add(m5);
+	//		jm2.addSeparator();
+	//		jm2.add(m6);
+	//
+	//		jm3 = new JMenu("帮助");
+	//		jm3.setFont(font);
+	//
+	//		JMenuItem m7 = new JMenuItem("使用说明");
+	//		m7.setFont(font);
+	//		m7.setHorizontalAlignment(SwingConstants.CENTER);
+	//		JMenuItem m8 = new JMenuItem("关于...");	
+	//		m8.setFont(font);
+	//		m8.setHorizontalAlignment(SwingConstants.CENTER);
+	//
+	//		jm3.add(m7);
+	//		jm3.addSeparator();
+	//		jm3.add(m8);
+	//
+	//		mmb.add(jm2);
+	//		mmb.add(jm3);
+	//
+	//	}
 
 	public MainUI(){
 		//初始化数据
@@ -570,7 +628,7 @@ public class MainUI extends JFrame{
 
 			setMargin(new Insets(5, 5, 5, 0));
 
-			if(column == 5){
+			if(column == 4){
 				this.btn_detail.setText(value == null ? "" : String.valueOf(value).split(";")[0]);
 				this.btn_delete.setText(value == null ? "" : String.valueOf(value).split(";")[1]);
 				return this.panel;
@@ -585,7 +643,7 @@ public class MainUI extends JFrame{
 
 		public MyStatisticTableJF(Order order){
 			this.order = order;
-			this.setSize(new Dimension(800,600));
+			this.setSize(new Dimension(1000,600));
 			this.setLocation(CommonUtil.getCenterPointOnScreen(this));
 
 

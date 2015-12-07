@@ -37,7 +37,6 @@ public class MyTableModel extends AbstractTableModel{
 		tableTitle.add("第三列");
 		tableTitle.add("第四列");
 		tableTitle.add("第五列");
-		tableTitle.add("第六列");
 		
 	}
 	
@@ -79,7 +78,7 @@ public class MyTableModel extends AbstractTableModel{
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		if(columnIndex == 1||columnIndex==5){
+		if(columnIndex == 1||columnIndex==4){
 			return true;
 		}
 		return false;

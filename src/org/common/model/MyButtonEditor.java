@@ -229,7 +229,7 @@ public class MyButtonEditor extends DefaultCellEditor{
 		
 		public MyDetailTableJF(Order order){
 			this.order = order;
-			this.setSize(new Dimension(800,600));
+			this.setSize(new Dimension(1000,600));
 			this.setLocation(CommonUtil.getCenterPointOnScreen(this));
 
 
